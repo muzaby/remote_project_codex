@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>여행 일정 플래너</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">DB 없는 1차 MVP</p>
+        <h1>여행 일정 플래너</h1>
+        <p class="hero-copy">여행 기간을 입력하면 날짜별 템플릿을 만들고, 일정·지도·준비물·가계부를 로컬에 저장합니다.</p>
+      </div>
+      <div class="hero-actions">
+        <button id="exportBtn" class="btn btn-secondary">JSON 내보내기</button>
+        <label class="btn btn-secondary file-btn">
+          JSON 가져오기
+          <input id="importInput" type="file" accept="application/json" />
+        </label>
+        <button id="resetBtn" class="btn btn-danger">초기화</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="panel setup-panel">
+        <h2>여행 기본 설정</h2>
+        <form id="tripForm" class="form-grid">
+          <label>여행명<input id="tripTitle" required placeholder="예: 오사카 3박 4일" /></label>
+          <label>국가
+            <select id="tripCountry">
+              <option value="japan">일본</option>
+              <option value="taiwan">대만</option>
+              <option value="other">기타</option>
+            </select>
+          </label>
+          <label>도시<input id="tripCities" placeholder="예: 오사카, 교토" /></label>
+          <label>시작일<input id="startDate" type="date" required /></label>
+          <label>종료일<input id="endDate" type="date" required /></label>
+          <label>동행자<input id="members" placeholder="예: 나, 친구1" /></label>
+          <label>기본 통화<input id="baseCurrency" value="KRW" /></label>
+          <button class="btn btn-primary full" type="submit">템플릿 적용</button>
+        </form>
+        <p class="storage-note">데이터는 현재 브라우저의 LocalStorage에 자동 저장됩니다. 다른 기기 공유는 JSON 내보내기를 사용하세요.</p>
+      </aside>
+
+      <section class="workspace">
+        <nav class="tabs" aria-label="주요 화면">
+          <button class="tab active" data-tab="schedule">일정</button>
+          <button class="tab" data-tab="map">지도</button>
+          <button class="tab" data-tab="checklist">준비물</button>
+          <button class="tab" data-tab="expense">가계부</button>
+          <button class="tab" data-tab="history">변경 이력</button>
+        </nav>
+
+        <section id="schedule" class="tab-panel active">
+          <div class="section-header">
+            <div>
+              <h2>일정</h2>
+              <p>드래그 없이 버튼으로 모바일에서도 순서를 조정합니다.</p>
+            </div>
+            <select id="dateSelector"></select>
+          </div>
+          <form id="itineraryForm" class="card form-card">
+            <input id="itemTitle" placeholder="일정 제목" required />
+            <input id="itemTime" type="time" />
+            <input id="itemPlace" placeholder="장소명" />
+            <select id="itemCategory">
+              <option value="sightseeing">관광</option>
+              <option value="food">식사</option>
+              <option value="transport">이동</option>
+              <option value="hotel">숙소</option>
+              <option value="shopping">쇼핑</option>
+              <option value="todo">확인필요</option>
+            </select>
+            <input id="itemLabels" placeholder="라벨: 예약필수, 결제완료" />
+            <textarea id="itemMemo" placeholder="메모"></textarea>
+            <button class="btn btn-primary" type="submit">일정 추가</button>
+          </form>
+          <div id="itineraryList" class="card-list"></div>
+        </section>
+
+        <section id="map" class="tab-panel">
+          <h2>지도</h2>
+          <p>1차 MVP는 API 키 없이 Google Maps 검색 링크를 생성합니다.</p>
+          <div id="mapList" class="card-list"></div>
+        </section>
+
+        <section id="checklist" class="tab-panel">
+          <div class="section-header"><h2>준비물</h2><button id="addChecklistBtn" class="btn btn-primary">항목 추가</button></div>
+          <div id="checklistList" class="card-list"></div>
+        </section>
+
+        <section id="expense" class="tab-panel">
+          <div class="section-header"><h2>가계부</h2><p id="expenseSummary"></p></div>
+          <form id="expenseForm" class="card form-card compact">
+            <input id="expenseTitle" placeholder="비용명" required />
+            <input id="expenseAmount" type="number" min="0" step="0.01" placeholder="금액" required />
+            <input id="expenseCurrency" placeholder="통화" value="JPY" />
+            <input id="expensePaidBy" placeholder="결제자" />
+            <input id="expenseParticipants" placeholder="참여자: 나, 친구1" />
+            <button class="btn btn-primary" type="submit">비용 추가</button>
+          </form>
+          <div id="expenseList" class="card-list"></div>
+        </section>
+
+        <section id="history" class="tab-panel">
+          <h2>변경 이력</h2>
+          <p>현재 브라우저 로컬 데이터 기준의 변경 내역입니다.</p>
+          <div id="historyList" class="card-list"></div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
